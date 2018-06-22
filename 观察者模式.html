@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>观察者模式</title>
+	<style type="text/css">
+	    /*ps复制css只是位置、大小、字体大小和层级*/
+	    /*脚本 将图层导出到文件*/
+	    /*增效工具生成器  导出资源*/
+	    /*右击图层 导出*/
+		/*.广播电视系统管理平台 {
+		  font-size: 32px;
+		  font-family: "Microsoft YaHei";
+		  color: rgb( 255, 255, 255 );
+		  font-weight: bold;
+		  line-height: 0.938;
+		  position: absolute;
+		  left: 274.5px;
+		  top: 52.319px;
+		  z-index: 183;
+		}*/
+	</style>
+</head>
+<body>
+消息数<span id="msg_num">0</span>
+<br>
+最新消息 <br>
+<ul id="msg"></ul>
+<textarea id="user_input" rows="5" cols="20"></textarea>
+<button id="user_submit">提交</button>
+<script type="text/javascript">
+	var Observer = (function(){
+		var _messages = [];
+		return {
+			regist:function(type, fn){
+				if(typeof _messages[type] === 'undefined'){
+					_messages[type] = [fn];
+				}else{
+					_messages[type].push(fn);
+				}
+				return this;
+			},
+			fire:function(type, args){
+				if(!_messages[type]) return;
+				var events = {
+					type:type,
+					args:args || {}
+				},
+				i = 0,
+				len = _messages[type].length;
+				for(; i < len; i++){
+					_messages[type][i].call(this, events);
+				}
+			},
+			remove:function(type, fn){
+				if(_messages[type] instanceof Array){
+					var i = _messages[type].length - 1;
+					for(; i >= 0; i--){
+						_messages[type].fn === fn && _messages[type].splice(i, 1);
+					}
+				}
+			}
+		}
+	})();
+	Observer.regist("test",function(e){
+		console.log(e.type, e.args.msg)
+	})
+	Observer.fire("test",{msg:'传递参数'});
+
+	function $(id){
+		return document.getElementById(id);
+	}
+
+	(function(){
+		function addMsgItem(e){
+			var text = e.args.text,
+			    ul = $('msg'),
+			    li = document.createElement('li'),
+			    span = document.createElement('span');
+			    span.innerHTML = "&nbsp&nbsp&nbsp&nbsp删除";
+			    li.innerHTML = text;
+
+			    span.onclick = function(){
+			    	ul.removeChild(li);
+			    	Observer.fire('removeCommentMessage',{
+			    		num: -1
+			    	});
+			    }
+			    li.appendChild(span);
+			    ul.appendChild(li);
+		}
+		Observer.regist('addCommentMessage', addMsgItem);
+	})();
+
+	(function(){
+		function changeMsgNum(e){
+			var num = e.args.num;
+			$('msg_num').innerHTML = parseInt($('msg_num').innerHTML) + num;
+		}
+		Observer.regist('addCommentMessage', changeMsgNum).regist("removeCommentMessage", changeMsgNum);
+	})();
+
+	(function(){
+		$('user_submit').onclick = function(){
+			var text = $('user_input');
+			if(text.value === ''){
+				return;
+			}
+			Observer.fire("addCommentMessage",{
+				text:text.value,
+				num:1
+			});
+			text.value = '';
+		}
+	})();
+</script>
+</body>
+</html>
