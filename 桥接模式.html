@@ -86,6 +86,36 @@
 
   	var p = new People(10,12,16);
   	p.init();
+
+  	function method(obj, type, fn){
+        obj.prototype[type] = fn;
+  	}
+
+  	var addMethod = function(base, length, method, attribute){
+  		switch (length){
+  			case 1: return function(){
+  				base[method](this[attribute]);
+  			};
+  			case 2: return function(){
+  				base[method](this[attribute], value);
+  			};
+  			case 3: return function(){
+  				base[method](this[attribute], cb(iteratee, this), context)
+  			};
+  			default: return function(){
+  				var args = slice.call(arguments);
+  				args.unshift(this[attribute]);
+  				return base[method].apply(base, args);
+  			};
+
+  		}
+  	};
+
+  	var addUnderscoreMethods = function(Class, base, methods, attribute){
+  		_.each(methods, function(length, method){
+  			if(base[method]) Class.prototype[method] = addMethod(base, length, method, attribute);
+  		})
+  	}
   </script>
 </body>
 </html>
