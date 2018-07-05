@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>适配模式</title>
+</head>
+<body>
+<script type="text/javascript">
+	function a(){
+		this.add = function(x, y){
+			return x+y;
+		}
+	}
+	var b = new a();
+	var c = new a().add(10,3);
+	var d = new a;
+	console.log(b, c, d);
+
+
+    //相似类的适配
+	A(function(){
+		A('button').on('click', function(){
+			//....
+		})
+	})
+
+	// 适配Jquery
+	window.A = A = jQuery;
+
+	// 非相似类的适配
+
+	var A = A || {};
+	A.g = function(id){
+		return document.getElementById(id);
+	}
+	A.on = function(id, type, fn){
+		var dom = typeof id === 'string' ? this.g(id) : id;
+		if(dom.addEventListener){
+			dom.addEventListener(type, fn, false);
+		}else if(dom.attachEvent){
+			dom.attachEvent('on'+type, fn);
+		}else{
+			dom['on'+type] = fn;
+		}
+	}
+
+	// 适配器
+	A.g = function(id){
+		return $(id)
+	}
+	A.on = function(id, type, fn){
+		var dom = typeof id === 'string' ? $('#'+id) : $(id);
+		dom.on(type, fn);
+	}
+</script>
+</body>
+</html>
