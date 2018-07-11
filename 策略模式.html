@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>策略模式</title>
+</head>
+<body>
+<script type="text/javascript">
+	//价格策略对象
+	var PriceStrategy = function(){
+		var strategy = {
+			return30: function(price){
+				return +price + parseInt(price/100)*30
+			},
+			return50:price=>{
+				return +price +parseInt(price/100)*50
+			},
+			percent90:price=>{
+				return price*100*90/1000
+			},
+			percent80:price=>{
+				return price*100*80/1000
+			}
+		},
+		//策略算法调用接口
+		return function(algorithm, price){
+			return strategy[algorithm] && strategy[algorithm](price);
+		}
+	}
+	//表单验证策略对象
+	var InputStrategy = function(){
+		var strategy = {
+			notNull:function(value){
+				return /\s+/.test(value) ? '请输入内容':'';
+			},
+			isNumber:function(value){
+				return /^[0-9]+(\.[0-9]+)?$/.test(value)? '':'请输入数字';
+			},
+			isPhone:function(value){
+				return /^\d{3}\-\d{8}$|^\d{4}\-\d{7}$/.test(value)?'':"请输入正确的电话号码格式";
+			}
+		},
+		return {
+			check:function(type,value){
+				value = value.trim();
+				return strategy[type] && strategy[type](value);
+			},
+			// 添加策略
+			addStrategy:function(type,fn){
+				strategy[type] = fn;
+			}
+		}
+	}
+</script>
+</body>
+</html>
