@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>装饰者模式</title>
+</head>
+<body>
+<script type="text/javascript">
+  //以前业务
+  let telInput = document.getElementById('tel_input');
+  let telWarnText = document.getElementById('tel_warn_text');
+  input.onclick = function(){
+  	telWarnText.style.display = 'inline-block';
+  } 
+
+  let decorator = function(input, fn){
+  	let input = document.getElementById(input);
+  	if(typeof input.onclick === 'function'){
+  		//缓存事件原有的回调函数
+  		let oldClickFn = input.onclick;
+  		input.onclick = function(){
+  		    //原有的
+  			oldClickFn();
+  			//新增的
+  			fn();
+  		}
+  	}else{
+  		input.onclick = fn;
+  	}
+  	//做其他的事情
+  }
+</script>
+</body>
+</html>
